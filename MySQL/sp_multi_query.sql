@@ -12,11 +12,16 @@ BEGIN
         IF _transaction = FALSE THEN
             ROLLBACK;
             
+            /*
+             * GET DIAGNOSTICS statement is not supported until MySQL 5.6
+             * 
             GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
             SET @error = CONCAT("sp_multi_query error | ", "ERROR ", @errno, " (", @sqlstate, "): ", @text);
             INSERT INTO tb_error ( err_text, err_query ) values ( @error, queries );
             
             SELECT @errno AS 'errno', @sqlstate AS 'sqlstate', @text AS 'error', inserted FROM DUAL;
+             */
+            RESIGNAL;
         ELSE
             RESIGNAL;
         END IF;
@@ -43,7 +48,7 @@ BEGIN
         
         SET @insertid_after = LAST_INSERT_ID();
         IF @insertid_before != @insertid_after THEN
-            SET inserted        = CONCAT(inserted, ',', @insertid_after);
+            SET inserted         = CONCAT(inserted, ',', @insertid_after);
             SET @insertid_before = @insertid_after;
         END IF;
     END WHILE;
