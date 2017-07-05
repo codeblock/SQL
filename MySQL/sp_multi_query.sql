@@ -34,8 +34,8 @@ BEGIN
     
     WHILE (LENGTH(@queries) > 0)
     DO
-        SET @queries_each = SUBSTRING(@queries,                               1, LOCATE(seperator, @queries) - 1);
-        SET @queries      = SUBSTRING(@queries, LOCATE(seperator, @queries) + 1);
+        SET @queries_each = SUBSTRING(@queries,                              1, INSTR(@queries, seperator) - 1);
+        SET @queries      = SUBSTRING(@queries, INSTR(@queries, seperator) + 1);
         
         IF @queries_each = '' THEN
             SET @queries_each = SUBSTRING(@queries, 1);
